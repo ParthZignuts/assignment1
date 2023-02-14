@@ -1,36 +1,32 @@
 import 'package:assignment_1/screens/home_screen.dart';
+import 'package:assignment_1/screens/reset_password_screen.dart';
 import 'package:assignment_1/screens/signup_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 
-import '../widget/widgets.dart';
-
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  static final String id = 'loginscreen';
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final auth = FirebaseAuth.instance;
   TextEditingController _emailContoller = TextEditingController();
   TextEditingController _passwordContoller = TextEditingController();
-  bool showPassword=true;
+  bool showPassword = true;
   var formkey = new GlobalKey<FormState>();
   var scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  _showSnackbar() {
-    var snackBar = new SnackBar(
-      content: Text("LogIn Successful!!"),
-      backgroundColor: Colors.green,
-      duration: Duration(seconds: 2),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
+  String email = '';
+  String pass = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       key: scaffoldKey,
       body: Form(
         key: formkey,
@@ -50,9 +46,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 450,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(50),
-                    bottomRight: Radius.circular(50)
-                  ),
+                      bottomLeft: Radius.circular(50),
+                      bottomRight: Radius.circular(50)),
                   gradient: LinearGradient(
                     colors: [(new Color(0xffaabbcc)), (new Color(0xffb74093))],
                     begin: Alignment.bottomLeft,
@@ -60,20 +55,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
+              //TextFormField for Email Id
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(15.0),
                 child: TextFormField(
                   validator: (value) {
                     if (value!.isEmpty || value == null) {
                       return '* Required';
                     } else if (!value.contains('@') || !value.contains('.')) {
                       return "Email Id  Not Valid";
-                    } else {
+                    }
+                    else if (value.length < 10) {
+                      return "Email  Id Not Valid";
+                    }
+                    else {
                       return null;
                     }
                   },
-                  keyboardType: TextInputType.text,
+                  keyboardType: TextInputType.emailAddress,
                   controller: _emailContoller,
+                  onChanged: (value) => email = value,
                   decoration: InputDecoration(
                     focusColor: Colors.pinkAccent,
                     labelText: 'Email',
@@ -87,8 +88,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
+
+              //TextFormField for password
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(15.0),
                 child: TextFormField(
                   validator: (value) {
                     if (value!.isEmpty || value == null) {
@@ -102,14 +105,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   keyboardType: TextInputType.text,
                   controller: _passwordContoller,
+                  onChanged: (value) => pass = value,
                   obscureText: showPassword,
                   obscuringCharacter: '*',
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
-                      icon: showPassword?Icon(Icons.remove_red_eye): Icon(Icons.close),
+                      icon: showPassword
+                          ? Icon(Icons.remove_red_eye)
+                          : Icon(Icons.close),
                       onPressed: () {
                         setState(() {
-                         showPassword=!showPassword;
+                          showPassword = !showPassword;
                         });
                       },
                       tooltip: "Show Password",
@@ -133,14 +139,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 onTap: () {
                   print("Forgot password");
+                  Navigator.pushNamed(context, ResetpasswordScreen.id);
                 },
               ),
+
+              //Button for LoginScreen
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (formkey.currentState!.validate()) {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()));
-                    _showSnackbar();
+                    try {
+                      var validUser = await auth.signInWithEmailAndPassword(
+                        email: email,
+                        password: pass,
+                      );
+                      if (validUser.user != null) {
+                        Navigator.pushNamed(context, HomeScreen.id);
+                      }
+                    } on FirebaseAuthException catch (e) {
+                      String error= e.message ?? 'Loged In';
+                      Fluttertoast.showToast(msg: error,gravity:ToastGravity.TOP,toastLength: Toast.LENGTH_LONG );
+                    }
                   }
                 },
                 child: Text('Log In'),
@@ -151,23 +169,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   shadowColor: MaterialStatePropertyAll(Color(0xffaabbcc)),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Does Not Have Account?"),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SignupScreen()));
-                    },
-                    child: Text(
-                      "Sign In",
-                      style: TextStyle(color: Colors.pink),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Does Not Have Account?"),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, SignupScreen.id);
+                      },
+                      child: Text(
+                        "Sign Up",
+                        style: TextStyle(color: Colors.pink),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               )
             ],
           ),

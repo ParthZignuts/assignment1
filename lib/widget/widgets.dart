@@ -18,7 +18,6 @@ class textFormFiled extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: TextFormField(
-
         keyboardType: TextInputType.text,
         controller: controller,
         decoration: InputDecoration(

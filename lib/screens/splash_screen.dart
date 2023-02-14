@@ -1,8 +1,9 @@
 import 'package:assignment_1/screens/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class SplashScreen extends StatefulWidget {
+  static const String id="splashscreen";
+
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
@@ -10,6 +11,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
+
+
   void initState() {
     super.initState();
     _navigateToLoginScreen();

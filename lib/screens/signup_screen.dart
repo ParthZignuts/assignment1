@@ -1,39 +1,33 @@
-import 'package:assignment_1/screens/home_screen.dart';
 import 'package:assignment_1/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:form_field_validator/form_field_validator.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({Key? key}) : super(key: key);
-
+  static final String id = 'signupscreen';
   @override
   State<SignupScreen> createState() => _SignupScreenState();
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  //TextEditing Controller For TextFormField
   TextEditingController _emailContoller = TextEditingController();
   TextEditingController _passwordContoller = TextEditingController();
   TextEditingController _confirmPasswordContoller = TextEditingController();
   TextEditingController _nameContoller = TextEditingController();
-  bool showPassword = true;
 
+  //variables For Changing State of show password
+  bool showPassword = true;
+  bool showConfirmPas = true;
+
+  //key for Maintain the FormField
   final scaffoldKey = new GlobalKey<ScaffoldState>();
   final formKey = new GlobalKey<FormState>();
 
-  String _email = '';
-  String _pass = '';
-
-  _showSnackbar() {
-    var snackBar = new SnackBar(
-      content: Text("Signup Successful!!"),
-      backgroundColor: Colors.green,
-      duration: Duration(seconds: 2),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  String? validatePassword(String value) {}
+  final _auth = FirebaseAuth.instance;
+  String name = "";
+  String email = "";
+  String password = "";
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +38,6 @@ class _SignupScreenState extends State<SignupScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-
               // Heading Part of Signup Screen
               Container(
                 child: Center(
@@ -59,9 +52,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 height: 450,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(50),
-                    bottomRight:Radius.circular(50)
-                  ),
+                      bottomLeft: Radius.circular(50),
+                      bottomRight: Radius.circular(50)),
                   gradient: LinearGradient(
                     colors: [(new Color(0xffb74093)), (new Color(0xffaabbcc))],
                     begin: Alignment.bottomLeft,
@@ -69,7 +61,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
               ),
-
 
               // textFormField For name
               Padding(
@@ -84,6 +75,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                   keyboardType: TextInputType.text,
                   controller: _nameContoller,
+                  onChanged: (value) => name = value,
                   decoration: InputDecoration(
                     focusColor: Colors.pinkAccent,
                     labelText: 'Name',
@@ -97,7 +89,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
               ),
-
 
               // textFormField For EmailId
               Padding(
@@ -114,6 +105,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                   keyboardType: TextInputType.text,
                   controller: _emailContoller,
+                  onChanged: (value) => email = value,
                   decoration: InputDecoration(
                     focusColor: Colors.pinkAccent,
                     labelText: 'Email',
@@ -127,7 +119,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
               ),
-
 
               // textFormField For Password
               Padding(
@@ -146,10 +137,13 @@ class _SignupScreenState extends State<SignupScreen> {
                   keyboardType: TextInputType.text,
                   controller: _passwordContoller,
                   obscureText: showPassword,
+                  onChanged: (value) => password = value,
                   obscuringCharacter: '*',
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
-                      icon: showPassword?Icon(Icons.remove_red_eye): Icon(Icons.close),
+                      icon: showPassword
+                          ? Icon(Icons.remove_red_eye)
+                          : Icon(Icons.close),
                       onPressed: () {
                         setState(() {
                           showPassword = !showPassword;
@@ -183,14 +177,16 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                   keyboardType: TextInputType.text,
                   controller: _confirmPasswordContoller,
-                  obscureText: showPassword,
+                  obscureText: showConfirmPas,
                   obscuringCharacter: '*',
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
-                      icon: showPassword?Icon(Icons.remove_red_eye): Icon(Icons.close),
+                      icon: showConfirmPas
+                          ? Icon(Icons.remove_red_eye)
+                          : Icon(Icons.close),
                       onPressed: () {
                         setState(() {
-                          showPassword = !showPassword;
+                          showConfirmPas = !showConfirmPas;
                         });
                       },
                       tooltip: "Show Password",
@@ -210,12 +206,22 @@ class _SignupScreenState extends State<SignupScreen> {
 
               // Button For Submitting Form
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (formKey.currentState!.validate()) {
-                    formKey.currentState!.save();
-                    _showSnackbar();
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()));
+                    try {
+                      final newUser =
+                          await _auth.createUserWithEmailAndPassword(
+                        email: email,
+                        password: password,
+                      );
+                      if (newUser.user != null) {
+                        await newUser.user?.updateDisplayName(name);
+                        Navigator.pushNamed(context, LoginScreen.id);
+                      }
+                    } on FirebaseAuthException catch (e) {
+                      String error= e.message ?? 'Signup Successfully';
+                      Fluttertoast.showToast(msg: error,gravity:ToastGravity.TOP,toastLength: Toast.LENGTH_LONG );
+                    }
                   }
                 },
                 child: Text('Sign In'),
