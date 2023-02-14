@@ -1,4 +1,4 @@
-import 'package:assignment_1/screens/home_screen.dart';
+import 'package:assignment_1/screens/dashboard_screen.dart';
 import 'package:assignment_1/screens/login_screen.dart';
 import 'package:assignment_1/screens/reset_password_screen.dart';
 import 'package:assignment_1/screens/signup_screen.dart';
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
           LoginScreen.id: (context) => LoginScreen(),
           SignupScreen.id: (context) => SignupScreen(),
           ResetpasswordScreen.id: (context) => ResetpasswordScreen(),
-          HomeScreen.id: (context) => HomeScreen(),
+          DashBoardScreen.id: (context) => DashBoardScreen(),
         });
   }
 }

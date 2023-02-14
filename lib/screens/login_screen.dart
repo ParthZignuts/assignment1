@@ -1,4 +1,4 @@
-import 'package:assignment_1/screens/home_screen.dart';
+import 'package:assignment_1/screens/dashboard_screen.dart';
 import 'package:assignment_1/screens/reset_password_screen.dart';
 import 'package:assignment_1/screens/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         password: pass,
                       );
                       if (validUser.user != null) {
-                        Navigator.pushNamed(context, HomeScreen.id);
+                        Navigator.pushNamed(context, DashBoardScreen.id);
                       }
                     } on FirebaseAuthException catch (e) {
                       String error= e.message ?? 'Loged In';
