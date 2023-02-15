@@ -207,6 +207,9 @@ class _SignupScreenState extends State<SignupScreen> {
               // Button For Submitting Form
               ElevatedButton(
                 onPressed: () async {
+                  showDialog(context: context, builder: (context){
+                    return Center(child: CircularProgressIndicator());
+                  });
                   if (formKey.currentState!.validate()) {
                     try {
                       final newUser =

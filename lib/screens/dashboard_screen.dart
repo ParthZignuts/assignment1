@@ -1,3 +1,4 @@
+import 'package:assignment_1/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -88,7 +89,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             ElevatedButton(
                 onPressed: () {
                   _firebaseAuth.signOut();
-                  Navigator.pop(context);
+                  Navigator.pushNamed(context, LoginScreen.id);
                 },
                 child: Text('SignOut'))
           ],

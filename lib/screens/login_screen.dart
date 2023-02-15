@@ -146,6 +146,9 @@ class _LoginScreenState extends State<LoginScreen> {
               //Button for LoginScreen
               ElevatedButton(
                 onPressed: () async {
+                  showDialog(context: context, builder: (context){
+                    return Center(child: CircularProgressIndicator());
+                  });
                   if (formkey.currentState!.validate()) {
                     try {
                       var validUser = await auth.signInWithEmailAndPassword(
