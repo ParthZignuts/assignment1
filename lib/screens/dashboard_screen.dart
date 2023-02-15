@@ -1,7 +1,6 @@
 import 'package:assignment_1/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../widget/listtile_widget.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -14,9 +13,9 @@ class DashBoardScreen extends StatefulWidget {
 class _DashBoardScreenState extends State<DashBoardScreen> {
   int _curruntIndex = 0;
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
   User? get cureentUser => _firebaseAuth.currentUser;
 
+// This all are the tabs which will be shown when index of the bottomNavigationbar will be changed
   final tab = [
     Center(
       child: Text("Home"),
@@ -32,10 +31,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     ),
   ];
 
+  //use For Get the Current User Name and display it in on Drawer Header
   Widget _userName() {
     return Text(cureentUser?.displayName ?? 'Name');
   }
-
+  //use For Get the Current User Email and display it in on Drawer Header
   Widget _userId() {
     return Text(cureentUser?.email ?? 'User Email');
   }
@@ -68,8 +68,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 accountEmail: _userId(),
               ),
             ),
-            ListTileWidget(
-                "Payment Method", "List Of Payment Methods", Icons.payment),
+            ListTileWidget("Payment Method", "List Of Payment Methods", Icons.payment),
             ListTileWidget("Address", "Your Address", Icons.location_on),
             ListTileWidget("Password", "Your Password", Icons.password),
             ListTileWidget("House Hold", "HouseHold", Icons.house_outlined),
@@ -95,6 +94,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           ],
         ),
       ),
+
+      //This is BottomNavigationbar
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _curruntIndex,
         selectedItemColor: Colors.black,

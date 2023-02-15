@@ -16,6 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   User? get cureentUser => _firebaseAuth.currentUser;
 
+
   void initState() {
     super.initState();
     _navigateToLoginScreen();
