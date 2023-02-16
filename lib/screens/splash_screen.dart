@@ -24,10 +24,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _navigateToLoginScreen() async {
     await Future.delayed(Duration(seconds: 4), () {});
-    if (cureentUser == null) {
-      Navigator.pushNamed(context, LoginScreen.id);
+    if (cureentUser == null  ) {
+      Navigator.pushNamedAndRemoveUntil(context, LoginScreen.id,(route) => false,);
     } else {
-      Navigator.pushNamed(context, DashBoardScreen.id);
+      Navigator.pushNamedAndRemoveUntil(context, DashBoardScreen.id,(route) => false,);
     }
   }
 

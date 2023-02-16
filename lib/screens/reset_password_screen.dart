@@ -1,7 +1,6 @@
 import 'package:assignment_1/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ResetpasswordScreen extends StatefulWidget {
@@ -61,14 +60,11 @@ class _ResetpasswordScreenState extends State<ResetpasswordScreen> {
                 padding: const EdgeInsets.all(15.0),
                 child: TextFormField(
                   validator: (value) {
-                    if (value!.isEmpty || value == null) {
-                      return '* Required';
-                    } else if (!value.contains('@') || !value.contains('.')) {
-                      return "Email Id  Not Valid";
-                    } else if (value.length < 10) {
-                      return "Email  Id Not Valid";
-                    } else {
-                      return null;
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter text';
+                    } else if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w]{2,4}')
+                        .hasMatch(value)) {
+                      return 'Please enter a valid email address';
                     }
                   },
                   keyboardType: TextInputType.emailAddress,

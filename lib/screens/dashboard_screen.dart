@@ -21,13 +21,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       child: Text("Home"),
     ),
     Center(
-      child: Text("Address"),
+      child: Text("Vendors"),
     ),
     Center(
-      child: Text("Address"),
+      child: Text("List"),
     ),
     Center(
-      child: Text("Household"),
+      child: Text("Categories"),
     ),
   ];
 
@@ -76,22 +76,24 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           ],
         ),
       ),
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            tab[_curruntIndex],
-            ElevatedButton(
-                onPressed: () {
-                  _firebaseAuth.signOut();
-                  Navigator.pushNamed(context, LoginScreen.id);
-                },
-                child: Text('SignOut'))
-          ],
+      body: SafeArea(
+        child: Container(
+          height: double.infinity,
+          width: double.infinity,
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              tab[_curruntIndex],
+              ElevatedButton(
+                  onPressed: () {
+                    _firebaseAuth.signOut();
+                    Navigator.pushNamed(context, LoginScreen.id);
+                  },
+                  child: Text('SignOut'))
+            ],
+          ),
         ),
       ),
 
@@ -104,22 +106,22 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-            backgroundColor: Colors.pinkAccent,
+            backgroundColor: Colors.pink,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Vendors',
-            backgroundColor: Colors.pinkAccent,
+            backgroundColor: Colors.pink,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: 'Lists',
-            backgroundColor: Colors.pinkAccent,
+            backgroundColor: Colors.pink,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.category),
             label: 'categories',
-            backgroundColor: Colors.pinkAccent,
+            backgroundColor: Colors.pink,
           ),
         ],
         onTap: (index) {

@@ -1,9 +1,11 @@
 import 'package:assignment_1/screens/dashboard_screen.dart';
 import 'package:assignment_1/screens/reset_password_screen.dart';
 import 'package:assignment_1/screens/signup_screen.dart';
+import 'package:assignment_1/services/auth_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 class LoginScreen extends StatefulWidget {
   static final String id = 'loginscreen';
@@ -26,7 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       key: scaffoldKey,
       body: Form(
         key: formkey,
@@ -60,16 +61,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.all(15.0),
                 child: TextFormField(
                   validator: (value) {
-                    if (value!.isEmpty || value == null) {
-                      return '* Required';
-                    } else if (!value.contains('@') || !value.contains('.')) {
-                      return "Email Id  Not Valid";
-                    }
-                    else if (value.length < 10) {
-                      return "Email  Id Not Valid";
-                    }
-                    else {
-                      return null;
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter text';
+                    } else if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w]{2,4}')
+                        .hasMatch(value)) {
+                      return 'Please enter a valid email address';
                     }
                   },
                   keyboardType: TextInputType.emailAddress,
@@ -146,9 +142,11 @@ class _LoginScreenState extends State<LoginScreen> {
               //Button for LoginScreen
               ElevatedButton(
                 onPressed: () async {
-                  showDialog(context: context, builder: (context){
-                    return Center(child: CircularProgressIndicator());
-                  });
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Center(child: CircularProgressIndicator());
+                      });
                   if (formkey.currentState!.validate()) {
                     try {
                       var validUser = await auth.signInWithEmailAndPassword(
@@ -156,11 +154,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         password: pass,
                       );
                       if (validUser.user != null) {
-                        Navigator.pushNamed(context, DashBoardScreen.id);
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          DashBoardScreen.id,
+                          (route) => false,
+                        );
                       }
                     } on FirebaseAuthException catch (e) {
-                      String error= e.message ?? 'Loged In';
-                      Fluttertoast.showToast(msg: error,gravity:ToastGravity.TOP,toastLength: Toast.LENGTH_LONG );
+                      String error = e.message ?? 'Loged In';
+                      Fluttertoast.showToast(
+                          msg: error,
+                          gravity: ToastGravity.TOP,
+                          toastLength: Toast.LENGTH_LONG);
                     }
                   }
                 },
@@ -189,7 +194,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-              )
+              ),
+              SignInButton(
+                Buttons.GoogleDark,
+                text: "Sign up with Google",
+                onPressed: () {
+                  AuthServices().signInWithGoogle().then((value) =>
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          DashBoardScreen.id, (route) => false));
+                },
+              ),
             ],
           ),
         ),

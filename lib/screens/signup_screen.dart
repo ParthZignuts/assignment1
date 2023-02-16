@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class SignupScreen extends StatefulWidget {
   static final String id = 'signupscreen';
+
   @override
   State<SignupScreen> createState() => _SignupScreenState();
 }
@@ -95,12 +96,11 @@ class _SignupScreenState extends State<SignupScreen> {
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
                   validator: (value) {
-                    if (value!.isEmpty || value == null) {
-                      return '* Required';
-                    } else if (!value.contains('@') || !value.contains('.')) {
-                      return "Email Id  Not Valid";
-                    } else {
-                      return null;
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter text';
+                    } else if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w]{2,4}')
+                        .hasMatch(value)) {
+                      return 'Please enter a valid email address';
                     }
                   },
                   keyboardType: TextInputType.text,
@@ -207,9 +207,11 @@ class _SignupScreenState extends State<SignupScreen> {
               // Button For Submitting Form
               ElevatedButton(
                 onPressed: () async {
-                  showDialog(context: context, builder: (context){
-                    return Center(child: CircularProgressIndicator());
-                  });
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Center(child: CircularProgressIndicator());
+                      });
                   if (formKey.currentState!.validate()) {
                     try {
                       final newUser =
@@ -222,8 +224,11 @@ class _SignupScreenState extends State<SignupScreen> {
                         Navigator.pushNamed(context, LoginScreen.id);
                       }
                     } on FirebaseAuthException catch (e) {
-                      String error= e.message ?? 'Signup Successfully';
-                      Fluttertoast.showToast(msg: error,gravity:ToastGravity.TOP,toastLength: Toast.LENGTH_LONG );
+                      String error = e.message ?? 'Signup Successfully';
+                      Fluttertoast.showToast(
+                          msg: error,
+                          gravity: ToastGravity.TOP,
+                          toastLength: Toast.LENGTH_LONG);
                     }
                   }
                 },
